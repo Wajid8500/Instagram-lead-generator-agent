@@ -1,0 +1,316 @@
+{
+  "name": "Google scrapper",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~google-search-scraper/run-sync-get-dataset-items?token=apify_api_FBexBpwC8e3Y9mdzfivsu6MwNSBcKZ42fmYQ",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"focusOnPaidAds\": false,\n    \"forceExactMatch\": false,\n    \"includeIcons\": false,\n    \"includeUnfilteredResults\": false,\n    \"maxPagesPerQuery\": 1,\n    \"mobileResults\": false,\n    \"queries\": \"site:instagram.com + {{ $json['Who are you looking for'] }} {{ $json.Location }} \",\n    \"resultsPerPage\": 50,\n    \"saveHtml\": false,\n    \"saveHtmlToKeyValueStore\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -380,
+        0
+      ],
+      "id": "645e28ed-3b07-401b-adb0-766fcfabf081",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "7f73dad9-2b7f-44ef-8efd-c3c6feacc55b",
+      "name": "Wait",
+      "webhookId": "dd29a15b-6f89-43a7-bfd5-2154a0400133"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This function processes search results and extracts structured Instagram profile info\n\nconst results = items[0].json.organicResults || [];\n\nconst formattedResults = results.map((result, index) => {\n  return {\n    title: result.title || \"\",\n    username: result.channelName || \"\", // channelName is often present\n    profileUrl: result.url || \"\",\n    displayUrl: result.displayedUrl || \"\",\n    description: result.description || \"\",\n    followers: result.followersAmount || \"\",\n    highlighted: result.emphasizedKeywords || [],\n    youtubeLink: result.description?.match(/(?:https?:\\/\\/)?(?:www\\.)?(youtube\\.com\\/[^\\s]+)/)?.[0] || \"\",\n    position: result.position || index + 1,\n    isOrganic: result.type === \"organic\"\n  };\n});\n\nreturn formattedResults.map(item => ({ json: item }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        0
+      ],
+      "id": "4c71dfaf-5884-495a-84da-e6cbb6778d92",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appyzol9qFNu59Wm3",
+          "mode": "list",
+          "cachedResultName": "Google Scrapper",
+          "cachedResultUrl": "https://airtable.com/appyzol9qFNu59Wm3"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblb41IP2cD7yibvw",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appyzol9qFNu59Wm3/tblb41IP2cD7yibvw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $json.title }}",
+            "profileUrl": "={{ $json.profileUrl }}",
+            "description": "={{ $json.description }}",
+            "youtubeLink": "={{ $json.youtubeLink }}",
+            "followers": "={{ $json.followers }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "profileUrl",
+              "displayName": "profileUrl",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "followers",
+              "displayName": "followers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "youtubeLink",
+              "displayName": "youtubeLink",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        280,
+        0
+      ],
+      "id": "9c79853d-9b28-48bd-808e-a22da6c487bd",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "hvZhKgZMgnr9s05U",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Who u are looking for?\n",
+        "height": 220,
+        "width": 170,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -635,
+        -60
+      ],
+      "id": "09b53e40-e871-496e-9ef0-9cc32e33eb8b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "Instagram Scrapper",
+        "formDescription": "Get all leads to airtable",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Who are you looking for"
+            },
+            {
+              "fieldLabel": "Location"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -600,
+        0
+      ],
+      "id": "505f38e9-7929-48fd-b58a-e2a9dab60beb",
+      "name": "On form submission",
+      "webhookId": "15039039-a890-4ab3-923e-e6221618d826"
+    },
+    {
+      "parameters": {
+        "content": "Searching",
+        "height": 220,
+        "width": 220,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -60
+      ],
+      "id": "c875c7f7-3f0f-4dc6-ac82-42d04c65d325",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Gather Result",
+        "height": 220,
+        "width": 180,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        -60
+      ],
+      "id": "cd16f6ed-2f4a-418d-ba4f-2548ca5d2a49",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Structure Output",
+        "height": 220,
+        "width": 200,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        10,
+        -60
+      ],
+      "id": "c949a79b-18d5-46ce-9575-ddb2bfc7a503",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Store Result\n",
+        "height": 220,
+        "width": 200,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        230,
+        -60
+      ],
+      "id": "a11b64d2-cf5b-4318-a2c5-a017a929bb0f",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "16dbddd3-b349-4a5e-9875-1d8056bcbe32",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "25be96cf7d0125cd5af460a9744511fd5de35dfd942b1514c38bc10bef0bede5"
+  },
+  "id": "I47Z61TdrSuFAuMK",
+  "tags": []
+}
