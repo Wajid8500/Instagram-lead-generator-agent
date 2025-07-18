@@ -4,7 +4,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.apify.com/v2/acts/apify~google-search-scraper/run-sync-get-dataset-items?token=apify_api_FBexBpwC8e3Y9mdzfivsu6MwNSBcKZ42fmYQ",
+        "url": "",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n    \"focusOnPaidAds\": false,\n    \"forceExactMatch\": false,\n    \"includeIcons\": false,\n    \"includeUnfilteredResults\": false,\n    \"maxPagesPerQuery\": 1,\n    \"mobileResults\": false,\n    \"queries\": \"site:instagram.com + {{ $json['Who are you looking for'] }} {{ $json.Location }} \",\n    \"resultsPerPage\": 50,\n    \"saveHtml\": false,\n    \"saveHtmlToKeyValueStore\": true\n}",
@@ -52,14 +52,14 @@
           "value": "appyzol9qFNu59Wm3",
           "mode": "list",
           "cachedResultName": "Google Scrapper",
-          "cachedResultUrl": "https://airtable.com/appyzol9qFNu59Wm3"
+          "cachedResultUrl": "https://airtable.com/"
         },
         "table": {
           "__rl": true,
           "value": "tblb41IP2cD7yibvw",
           "mode": "list",
           "cachedResultName": "Table 1",
-          "cachedResultUrl": "https://airtable.com/appyzol9qFNu59Wm3/tblb41IP2cD7yibvw"
+          "cachedResultUrl": "https://airtable.com/"
         },
         "columns": {
           "mappingMode": "defineBelow",
